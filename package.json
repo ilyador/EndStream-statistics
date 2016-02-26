@@ -1,0 +1,8 @@
+{
+  "name": "endstream-statistics",
+  "version": "0.0.1",
+  "main": "stats.js",
+  "dependencies": {
+    "lodash": "^4.5.1"
+  }
+}

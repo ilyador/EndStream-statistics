@@ -1,4 +1,7 @@
 var _ = require('lodash');
+var google_spreadsheet = require("google-spreadsheet");
+var agents_sheet = new google_spreadsheet('1m1nZ8qNmFOJhRNfuH7jT_uRfXZtZtv9OP5iGdUI-wls');
+var creds = require('./creds.json');
 
 var price_options = [
   '1x',
@@ -22,5 +25,21 @@ var price_options = [
 ]
 
 
+// seed
+
+var turnpoint_deck = {
+  'r/b': 15,
+  'r/g': 15,
+  'g/b': 15
+}
+
+// shuffle & shift n cards for each player, shuffle agenda
+// 1. see if a certain price is payable
 
 console.log(_.shuffle(price_options))
+
+agents_sheet.useServiceAccountAuth(creds, function(err){
+  agents_sheet.getInfo( function(err, sheet_info ){
+    console.log( sheet_info.title + ' is loaded' );
+  });
+})

@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "main": "stats.js",
   "dependencies": {
+    "google-spreadsheet": "^1.1.4",
     "lodash": "^4.5.1"
   }
 }

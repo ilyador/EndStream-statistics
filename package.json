@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "main": "stats.js",
   "dependencies": {
+    "bluebird": "^3.3.3",
     "google-spreadsheet": "^1.1.4",
-    "lodash": "^4.5.1"
+    "lodash": "^4.5.1",
+    "verbal-expressions": "^0.2.1"
   }
 }

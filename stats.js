@@ -1,45 +1,49 @@
+// setup
 var _ = require('lodash');
+var Promise = require("bluebird");
 var google_spreadsheet = require("google-spreadsheet");
 var agents_sheet = new google_spreadsheet('1m1nZ8qNmFOJhRNfuH7jT_uRfXZtZtv9OP5iGdUI-wls');
 var creds = require('./creds.json');
 
-var price_options = [
-  '1x',
-  '2x',
-  '3x',
-  '1h',
-  '2h',
-  '3h',
-  '1f',
-  '2f',
-  '3f',
-  '1f 1x',
-  '2f 1x',
-  '1f 2x',
-  '1f 2x',
-  '2f 2x',
-  '1f 1h',
-  '2f 1h',
-  '1f 2h',
-  '2f 2h'
-]
-
-
-// seed
-
+// data
+var price_cols = [3,6,8,10]
+var price_options = {}
 var turnpoint_deck = {
-  'r/b': 15,
-  'r/g': 15,
-  'g/b': 15
+  'm': 15,
+  's': 15,
+  'p': 15
 }
 
 // shuffle & shift n cards for each player, shuffle agenda
-// 1. see if a certain price is payable
+// see if a certain price is payable
 
-console.log(_.shuffle(price_options))
+Promise.promisifyAll(agents_sheet)
 
-agents_sheet.useServiceAccountAuth(creds, function(err){
-  agents_sheet.getInfo( function(err, sheet_info ){
-    console.log( sheet_info.title + ' is loaded' );
+agents_sheet.useServiceAccountAuth(creds, function(error){
+
+  var data_promises = price_cols.map(function (col) {
+   return agents_sheet.getCellsAsync(1, {
+      'min-row': 2,
+      'max-row': 30,
+      'min-col': col,
+      'max-col': col,
+      'return-empty': false
+    })
+  })
+
+  Promise.all(data_promises).then(function (data) {
+    var rawData = _.flattenDeep(data)
+    _.forEach(rawData, function (item) {
+      var price = item.value
+
+      if (price_options.hasOwnProperty(price)){
+        price_options[price] += 1
+      } else {
+        price_options[price] = 1
+      }
+    })
+
+    console.log(price_options);
   });
 })
+

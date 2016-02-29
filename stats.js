@@ -6,9 +6,8 @@ var agents_sheet = new google_spreadsheet('1m1nZ8qNmFOJhRNfuH7jT_uRfXZtZtv9OP5iG
 var creds = require('./creds.json');
 
 // data
-var price_cols = [3,6,8,10]
-var price_options = {}
-var turnpoint_deck = {
+const price_cols = [3,6,8,10]
+const turnpoint_deck = {
   'm': 15,
   's': 15,
   'p': 15
@@ -19,10 +18,10 @@ var turnpoint_deck = {
 
 Promise.promisifyAll(agents_sheet)
 
-agents_sheet.useServiceAccountAuth(creds, function(error){
+agents_sheet.useServiceAccountAuthAsync(creds).then(function(){
 
   var data_promises = price_cols.map(function (col) {
-   return agents_sheet.getCellsAsync(1, {
+    return agents_sheet.getCellsAsync(1, {
       'min-row': 2,
       'max-row': 30,
       'min-col': col,
@@ -33,6 +32,8 @@ agents_sheet.useServiceAccountAuth(creds, function(error){
 
   Promise.all(data_promises).then(function (data) {
     var rawData = _.flattenDeep(data)
+    var price_options = {}
+
     _.forEach(rawData, function (item) {
       var price = item.value
 
@@ -43,7 +44,23 @@ agents_sheet.useServiceAccountAuth(creds, function(error){
       }
     })
 
-    console.log(price_options);
-  });
+    var price_options_sorted = _.sortKeysBy(price_options, function (value, key) {
+      return value;
+    });
+
+    console.log(price_options_sorted);
+  })
 })
 
+
+_.mixin({
+  'sortKeysBy': function (obj, comparator) {
+    var keys = _.sortBy(_.keys(obj), function (key) {
+      return comparator ? comparator(obj[key], key) : key;
+    })
+
+    return _.zipObject(keys, _.map(keys, function (key) {
+      return obj[key];
+    }))
+  }
+})

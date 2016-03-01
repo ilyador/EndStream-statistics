@@ -1,7 +1,12 @@
+"use strict";
+
 var _ = require('lodash')
-var VerEx = require('verbal-expressions');
+var VerEx = require('verbal-expressions')
 var math = require('mathjs')
+var n_k = require('combinations-js')
+var cmb = require('js-combinatorics')
 //var prices = require('./google-spreadsheet-data')
+
 
 const streamDeck = {
   'm': 15,
@@ -45,19 +50,35 @@ const prices = {
 }
 
 
+var createStream = () => {
+  let stream = [].concat(..._.map(streamDeck,
+    (times, agenda) => _.times(times, _=>agenda)
+  ))
 
-function createStream () {
-  var deck = []
-
-  Object.keys(streamDeck).forEach(function (agenda) {
-    deck = deck.concat( _.fill(Array(streamDeck[agenda]), agenda) )
-  })
-
-  return _.shuffle(deck).splice(0, streamSize)
+  return _.shuffle(stream).splice(0, streamSize)
 }
 
+var priceDeconstructor = (price) => {
+  var priceCombinations = []
+  var split = price.split(" ")
 
+  for (let i = 0; i < split.length; i++) {
+    for (let j = 0; j < parseInt(split[i][0]); j++) {
+      let singlePrice = split[i].substr(1)
+      if (singlePrice === 'x') singlePrice = 'msp'
+      priceCombinations.push(singlePrice)
+    }
+  }
+
+  var opts = cmb.cartesianProduct(...priceCombinations).toArray()
+  return opts.map( priceArray => priceArray.join('') )
+}
+
+var basePrice = priceDeconstructor('1ms 2x')
 var stream = createStream()
+
+console.log(stream);
+console.log(basePrice);
 
 // shuffle & shift n cards for each player, shuffle agenda
 // see if a certain price is payable

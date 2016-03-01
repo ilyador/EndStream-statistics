@@ -18,11 +18,13 @@ const streamSize = 6
 
 var createStream = () => {
   let stream = [].concat(..._.map(streamDeck,
-    (times, agenda) => _.times(times, _=>agenda)
+    (times, agenda) => _.times(times, () => agenda)
   ))
 
   return _.shuffle(stream).splice(0, streamSize).join('')
 }
+
+
 
 var priceDeconstructor = price => {
   var priceCombinations = []
@@ -40,8 +42,9 @@ var priceDeconstructor = price => {
   return opts.map( priceArray => priceArray.join('') )
 }
 
-var priceStats = (priceCombinations, stream) => {
 
+
+var priceStats = (priceCombinations, stream) => {
   return priceCombinations.reduce( (sum, price) => {
 
     var m_n = stream.replace(/[^m]/g, "").length
@@ -52,9 +55,9 @@ var priceStats = (priceCombinations, stream) => {
     var s_k = price.replace(/[^s]/g, "").length
     var p_k = price.replace(/[^p]/g, "").length
 
-    var prob = n_k(m_n, m_k) * n_k(s_n, s_k) * n_k(p_n, p_k)
+    var probability = n_k(m_n, m_k) * n_k(s_n, s_k) * n_k(p_n, p_k)
 
-    return sum + prob
+    return sum + probability
   }, 0)
 }
 

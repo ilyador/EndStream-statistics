@@ -1,6 +1,6 @@
 {
   "name": "endstream-statistics",
-  "version": "0.0.1",
+  "version": "0.1",
   "main": "stats.js",
   "dependencies": {
     "bluebird": "^3.3.3",
@@ -8,7 +8,5 @@
     "google-spreadsheet": "^1.1.4",
     "js-combinatorics": "^0.5.0",
     "lodash": "^4.5.1",
-    "mathjs": "^2.7.0",
-    "verbal-expressions": "^0.2.1"
   }
 }

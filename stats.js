@@ -1,12 +1,13 @@
 "use strict";
 
 var _ = require('lodash')
-var VerEx = require('verbal-expressions')
-var math = require('mathjs')
 var n_k = require('combinations-js')
 var cmb = require('js-combinatorics')
-//var prices = require('./google-spreadsheet-data')
+var getAgentPrices = require('./google-spreadsheet-data')
 
+getAgentPrices().then(function (data) {
+  console.log(data);
+})
 
 const streamDeck = {
   'm': 15,
@@ -74,11 +75,11 @@ var priceDeconstructor = (price) => {
   return opts.map( priceArray => priceArray.join('') )
 }
 
-var basePrice = priceDeconstructor('1ms 2x')
+var basePrice = priceDeconstructor('2ms 1x')
 var stream = createStream()
 
-console.log(stream);
-console.log(basePrice);
+console.log(stream)
+console.log(basePrice)
 
 // shuffle & shift n cards for each player, shuffle agenda
 // see if a certain price is payable

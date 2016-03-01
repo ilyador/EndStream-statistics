@@ -11,46 +11,35 @@ Promise.promisifyAll(agentsSheet)
 
 
 _.mixin({
-  'sortKeysBy': function (obj, comparator) {
-    var keys = _.sortBy(_.keys(obj), function (key) {
-      return comparator ? comparator(obj[key], key) : key
-    })
-
-    return _.zipObject(keys, _.map(keys, function (key) {
-      return obj[key]
-    }))
+  'sortKeysBy': (obj, comparator) => {
+    var keys = _.sortBy(_.keys(obj), key => comparator ? comparator(obj[key], key) : key)
+    return _.zipObject(keys, _.map(keys, (key) => obj[key]))
   }
 })
 
 
-agentsSheet.useServiceAccountAuthAsync(creds).then(function(){
+module.exports = () => {
+  return agentsSheet.useServiceAccountAuthAsync(creds).then( () => {
 
-  var data_promises = priceCols.map(function (col) {
-    return agentsSheet.getCellsAsync(1, {
-      'min-row': 2,
-      'max-row': 30,
-      'min-col': col,
-      'max-col': col,
-      'return-empty': false
+    var dataPromises = priceCols.map( col =>
+      agentsSheet.getCellsAsync(1, {
+        'min-row': 2,
+        'max-row': 30,
+        'min-col': col,
+        'max-col': col,
+        'return-empty': false
+      })
+    )
+
+    return Promise.all(dataPromises).then( data => {
+      var rawData = _.flattenDeep(data)
+      var priceOptions = {}
+
+      _.forEach(rawData, item => {
+        priceOptions[item.value] = (priceOptions[item.value] + 1) || 1
+      })
+
+      return _.sortKeysBy(priceOptions, value => -value)
     })
   })
-
-  Promise.all(data_promises).then(function (data) {
-    var rawData = _.flattenDeep(data)
-    var priceOptions = {}
-
-    _.forEach(rawData, function (item) {
-      var price = item.value
-
-      if (priceOptions.hasOwnProperty(price)){
-        priceOptions[price] += 1
-      } else {
-        priceOptions[price] = 1
-      }
-    })
-
-    var priceOptionsSorted = _.sortKeysBy(priceOptions, function (value, key) {
-      return (- value)
-    })
-  })
-})
+}

@@ -32,10 +32,9 @@ module.exports = () => {
     )
 
     return Promise.all(dataPromises).then( data => {
-      var rawData = _.flattenDeep(data)
       var priceOptions = {}
 
-      _.forEach(rawData, item => {
+      _.forEach( _.flattenDeep(data), item => {
         priceOptions[item.value] = (priceOptions[item.value] + 1) || 1
       })
 

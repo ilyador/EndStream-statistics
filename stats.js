@@ -5,9 +5,7 @@ var n_k = require('combinations-js')
 var cmb = require('js-combinatorics')
 var getAgentPrices = require('./google-spreadsheet-data')
 
-getAgentPrices().then(function (data) {
-  console.log(data);
-})
+
 
 const streamDeck = {
   'm': 15,
@@ -15,40 +13,7 @@ const streamDeck = {
   'p': 15
 }
 const streamSize = 6
-const prices = {
-  '1p 1x': 8,
-  '1s 1x': 7,
-  '1m 1x': 7,
-  '2ms': 7,
-  '1x': 7,
-  '3ms': 6,
-  '2m 1x': 5,
-  '2p 1x': 5,
-  '2s 1x': 4,
-  '2mp': 4,
-  '1m 2x': 3,
-  '3mp': 3,
-  '1ms': 3,
-  '1m 1ms': 2,
-  '2sp': 2,
-  '4x': 2,
-  '2x': 2,
-  '1p': 2,
-  '1m': 2,
-  '1s': 2,
-  '2m': 2,
-  '1mp': 2,
-  '1s 2x': 2,
-  '4mp': 2,
-  '1p 2mp': 1,
-  '1sp': 1,
-  '1m 2ms': 1,
-  '3x': 1,
-  '2m 2ms': 1,
-  '2s': 1,
-  '1m 1sp': 1,
-  '2s 2x': 1
-}
+
 
 
 var createStream = () => {
@@ -56,10 +21,10 @@ var createStream = () => {
     (times, agenda) => _.times(times, _=>agenda)
   ))
 
-  return _.shuffle(stream).splice(0, streamSize)
+  return _.shuffle(stream).splice(0, streamSize).join('')
 }
 
-var priceDeconstructor = (price) => {
+var priceDeconstructor = price => {
   var priceCombinations = []
   var split = price.split(" ")
 
@@ -75,11 +40,28 @@ var priceDeconstructor = (price) => {
   return opts.map( priceArray => priceArray.join('') )
 }
 
-var basePrice = priceDeconstructor('2ms 1x')
-var stream = createStream()
+var priceStats = (priceCombinations, stream) => {
 
-console.log(stream)
-console.log(basePrice)
+  return priceCombinations.reduce( (sum, price) => {
 
-// shuffle & shift n cards for each player, shuffle agenda
-// see if a certain price is payable
+    var m_n = stream.replace(/[^m]/g, "").length
+    var s_n = stream.replace(/[^s]/g, "").length
+    var p_n = stream.replace(/[^p]/g, "").length
+
+    var m_k = price.replace(/[^m]/g, "").length
+    var s_k = price.replace(/[^s]/g, "").length
+    var p_k = price.replace(/[^p]/g, "").length
+
+    var prob = n_k(m_n, m_k) * n_k(s_n, s_k) * n_k(p_n, p_k)
+
+    return sum + prob
+  }, 0)
+}
+
+
+
+getAgentPrices().then( data => {
+  console.log(data);
+})
+
+console.log( priceStats( priceDeconstructor('1m 1x'), createStream() ))

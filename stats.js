@@ -5,6 +5,13 @@ var n_k = require('combinations-js')
 var cmb = require('js-combinatorics')
 var getAgentPrices = require('./google-spreadsheet-data')
 
+_.mixin({
+  'sortKeysBy': (obj, comparator) => {
+    var keys = _.sortBy(_.keys(obj), key => comparator ? comparator(obj[key], key) : key)
+    return _.zipObject(keys, _.map(keys, (key) => obj[key]))
+  }
+})
+
 const streamDeck = {
   'm': 15,
   's': 15,
@@ -78,5 +85,5 @@ var megaStats = (prices, times) => {
 
 
 getAgentPrices().then( data => {
-  console.log(megaStats(data, 1))
+  console.log(_.sortKeysBy(megaStats(data, 1000), value => -value))
 })

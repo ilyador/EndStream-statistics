@@ -11,15 +11,6 @@ Promise.promisifyAll(agentsSheet)
 
 
 
-_.mixin({
-  'sortKeysBy': (obj, comparator) => {
-    var keys = _.sortBy(_.keys(obj), key => comparator ? comparator(obj[key], key) : key)
-    return _.zipObject(keys, _.map(keys, (key) => obj[key]))
-  }
-})
-
-
-
 module.exports = () => {
   return agentsSheet.useServiceAccountAuthAsync(creds).then( () => {
 

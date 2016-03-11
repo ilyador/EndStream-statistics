@@ -43,7 +43,9 @@ module.exports = () => {
       })
 
       //return _.sortKeysBy(priceOptions, value => -value)
-      return _.uniq(priceOptions1)
+
+      var uniq = _.uniq(priceOptions1)
+      return _.zipObject(uniq, Array(uniq.length).fill(0))
     })
   })
 }

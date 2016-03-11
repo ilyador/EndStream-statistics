@@ -1,6 +1,6 @@
 {
   "name": "endstream-statistics",
-  "version": "0.1",
+  "version": "0.1.2",
   "main": "stats.js",
   "dependencies": {
     "bluebird": "^3.3.3",

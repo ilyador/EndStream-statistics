@@ -16,12 +16,12 @@ const streamSize = 6
 
 
 
-var createStream = () => {
+var createStream = size => {
   let stream = [].concat(..._.map(streamDeck,
     (times, agenda) => _.times(times, () => agenda)
   ))
 
-  return _.shuffle(stream).splice(0, streamSize).join('')
+  return _.shuffle(stream).splice(0, size).join('')
 }
 
 
@@ -63,8 +63,37 @@ var priceStats = (priceCombinations, stream) => {
 
 
 
+function cartesianProductOf() {
+  return _.reduce(arguments, function(a, b) {
+    return _.flatten(_.map(a, function(x) {
+      return _.map(b, function(y) {
+        return x.concat([y])
+      });
+    }), false)
+  }, [ [] ])
+}
+//console.log("cartesianProductOf", cartesianProductOf([ 'm', 'msp', 'msp' ]))
+
+
+
+var megaStats = (prices, times, stream) => {
+  var stats = {}
+
+  for (let i = 0; i < times; i++) {
+    _.forEach(prices, val => {
+      stats[val] = priceStats( priceDeconstructor(val), stream )
+    })
+  }
+
+  return stats
+}
+
+
+
 getAgentPrices().then( data => {
-  console.log(data);
+  console.log(megaStats(data, 10, createStream(streamSize)))
 })
 
-console.log( priceStats( priceDeconstructor('1m 1x'), createStream() ))
+
+//console.log("priceDeconstructor: ", priceDeconstructor('1m 2x'))
+//console.log( priceStats( priceDeconstructor('1m 2x'), createStream(streamSize) ))

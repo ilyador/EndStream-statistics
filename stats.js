@@ -57,16 +57,22 @@ var priceDeconstructor = price => {
 
 var priceStats = (priceCombinations, stream) => {
   return priceCombinations.reduce( (sum, price) => {
+    var p = price
+    var probability
 
-    var m_n = stream.replace(/[^m]/g, '').length
-    var s_n = stream.replace(/[^s]/g, '').length
-    var p_n = stream.replace(/[^p]/g, '').length
+    if(p) {
 
-    var m_k = price.replace(/[^m]/g, '').length
-    var s_k = price.replace(/[^s]/g, '').length
-    var p_k = price.replace(/[^p]/g, '').length
+    }
 
-    var probability = n_k(m_n, m_k) * n_k(s_n, s_k) * n_k(p_n, p_k)
+    var M_n = stream.replace(/[^m]/g, '').length
+    var S_n = stream.replace(/[^s]/g, '').length
+    var P_n = stream.replace(/[^p]/g, '').length
+
+    var M_k = price.replace(/[^m]/g, '').length
+    var S_k = price.replace(/[^s]/g, '').length
+    var P_k = price.replace(/[^p]/g, '').length
+
+    probability = n_k(M_n, M_k) * n_k(S_n, S_k) * n_k(P_n, P_k)
 
     return sum + probability
   }, 0)
@@ -84,6 +90,8 @@ var megaStats = (prices, times) => {
 
 
 
-getAgentPrices().then( data => {
-  console.log(_.sortKeysBy(megaStats(data, 1000), value => -value))
-})
+console.log(priceStats( priceDeconstructor('2x'), 'mmppss' ))
+
+//getAgentPrices().then( data => {
+//  console.log(_.sortKeysBy(megaStats(data, 1000), value => -value))
+//})

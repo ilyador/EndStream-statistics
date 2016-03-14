@@ -53,29 +53,39 @@ var priceDeconstructor = price => {
   return _.uniq(o)
 }
 
-
-
 var priceStats = (priceCombinations, stream) => {
   return priceCombinations.reduce( (sum, price) => {
-    var p = price
-    var probability
+    var s = stream
+    var probabilitySum
 
-    if(p) {
+    while (probability > 0) {
+      let probability = 0
+      let M_n = s.replace(/[^m]/g, '').length
+      let S_n = s.replace(/[^s]/g, '').length
+      let P_n = s.replace(/[^p]/g, '').length
 
+      let M_k = price.replace(/[^m]/g, '').length
+      let S_k = price.replace(/[^s]/g, '').length
+      let P_k = price.replace(/[^p]/g, '').length
+
+      probability = n_k(M_n, M_k) * n_k(S_n, S_k) * n_k(P_n, P_k)
+
+      s = reduceStream(s, 'm', M_k)
+      s = reduceStream(s, 's', S_k)
+      s = reduceStream(s, 'p', P_k)
     }
 
-    var M_n = stream.replace(/[^m]/g, '').length
-    var S_n = stream.replace(/[^s]/g, '').length
-    var P_n = stream.replace(/[^p]/g, '').length
-
-    var M_k = price.replace(/[^m]/g, '').length
-    var S_k = price.replace(/[^s]/g, '').length
-    var P_k = price.replace(/[^p]/g, '').length
-
-    probability = n_k(M_n, M_k) * n_k(S_n, S_k) * n_k(P_n, P_k)
-
-    return sum + probability
+    return sum + probabilitySum
   }, 0)
+}
+
+var reduceStream = (stream, agenda, times) => {
+  var rx1 = new RegExp('^([^'+ agenda +']*' + agenda +'){' + times + '}','g')
+  var rx2 = new RegExp(agenda,'g')
+
+  return stream.replace(rx1, function(match) {
+    return match.replace(rx2, '')
+  })
 }
 
 var megaStats = (prices, times, stream) => {
@@ -89,10 +99,11 @@ var megaStats = (prices, times, stream) => {
 }
 
 
+//console.log(reduceStream('mmppss', 'p', 3))
 console.log(priceStats( priceDeconstructor('2x'), 'mmppss' ))
 
 //getAgentPrices().then( data => {
 //  var stream = createStream(streamSize)
-//  console.log("stream: ", stream)
+//  console.log('stream: ', stream)
 //  console.log(_.sortKeysBy(megaStats(data, 1, stream), value => -value))
 //})

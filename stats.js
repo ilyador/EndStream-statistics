@@ -78,10 +78,10 @@ var priceStats = (priceCombinations, stream) => {
   }, 0)
 }
 
-var megaStats = (prices, times) => {
+var megaStats = (prices, times, stream) => {
   for (let i = 0; i < times; i++) {
     _.forOwn(prices, (val, key) => {
-      prices[key] += priceStats( priceDeconstructor(key), createStream(streamSize) )
+      prices[key] += priceStats( priceDeconstructor(key), stream)
     })
   }
 
@@ -89,9 +89,10 @@ var megaStats = (prices, times) => {
 }
 
 
-
 console.log(priceStats( priceDeconstructor('2x'), 'mmppss' ))
 
 //getAgentPrices().then( data => {
-//  console.log(_.sortKeysBy(megaStats(data, 1000), value => -value))
+//  var stream = createStream(streamSize)
+//  console.log("stream: ", stream)
+//  console.log(_.sortKeysBy(megaStats(data, 1, stream), value => -value))
 //})

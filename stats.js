@@ -57,27 +57,18 @@ var priceStats = (priceCombinations, stream) => {
   return priceCombinations.reduce( (sum, price) => {
     var s = stream
     var probability
-    var probabilityCount = 0
 
-    do {
-      let M_n = s.replace(/[^m]/g, '').length
-      let S_n = s.replace(/[^s]/g, '').length
-      let P_n = s.replace(/[^p]/g, '').length
+    let M_n = s.replace(/[^m]/g, '').length
+    let S_n = s.replace(/[^s]/g, '').length
+    let P_n = s.replace(/[^p]/g, '').length
 
-      let M_k = price.replace(/[^m]/g, '').length
-      let S_k = price.replace(/[^s]/g, '').length
-      let P_k = price.replace(/[^p]/g, '').length
+    let M_k = price.replace(/[^m]/g, '').length
+    let S_k = price.replace(/[^s]/g, '').length
+    let P_k = price.replace(/[^p]/g, '').length
 
-      probability = n_k(M_n, M_k) * n_k(S_n, S_k) * n_k(P_n, P_k)
+    probability = n_k(M_n, M_k) * n_k(S_n, S_k) * n_k(P_n, P_k)
 
-      probabilityCount += probability
-
-      s = reduceStream(s, 'm', M_k)
-      s = reduceStream(s, 's', S_k)
-      s = reduceStream(s, 'p', P_k)
-    } while (probability > 0)
-
-    return sum + probabilityCount
+    return sum + probability
   }, 0)
 }
 
@@ -90,21 +81,18 @@ var reduceStream = (stream, agenda, times) => {
   })
 }
 
-var megaStats = (prices, times, stream) => {
+var megaStats = (prices, times) => {
   for (let i = 0; i < times; i++) {
+    let stream = createStream(streamSize)
     _.forOwn(prices, (val, key) => {
       prices[key] += priceStats( priceDeconstructor(key), stream)
     })
   }
-
-  return prices
+  return _.sortKeysBy(prices, value => -value)
 }
 
 
-console.log("priceStats: ", priceStats( priceDeconstructor('2mp'), 'mmppss' ))
 
-//getAgentPrices().then( data => {
-//  var stream = createStream(streamSize)
-//  console.log('stream: ', stream)
-//  console.log(_.sortKeysBy(megaStats(data, 1000, stream), value => -value))
-//})
+getAgentPrices().then( data => {
+  console.log(megaStats(data, 100000))
+})

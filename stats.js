@@ -83,6 +83,7 @@ var reduceStream = (stream, agenda, times) => {
 
 var megaStats = (prices, times) => {
   for (let i = 0; i < times; i++) {
+    if ((i % 1000) === 0) console.log(i)
     let stream = createStream(streamSize)
     _.forOwn(prices, (val, key) => {
       prices[key] += priceStats( priceDeconstructor(key), stream)

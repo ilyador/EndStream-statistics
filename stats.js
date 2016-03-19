@@ -3,7 +3,6 @@
 var _ = require('lodash')
 var n_k = require('combinations-js')
 var cmb = require('js-combinatorics')
-var getAgentPrices = require('./google-spreadsheet-data')
 
 _.mixin({
   'sortKeysBy': (obj, comparator) => {
@@ -12,6 +11,41 @@ _.mixin({
   }
 })
 
+var prices = {
+  '2m 1x': 0,
+  '1m 1ms': 0,
+  '1s 1x': 0,
+  '2p 1x': 0,
+  '1p 1x': 0,
+  '1m 1x': 0,
+  '2s 1x': 0,
+  '2ms': 0,
+  '2mp': 0,
+  '2sp': 0,
+  '1m 2x': 0,
+  '3ms': 0,
+  '3x': 0,
+  '4x': 0,
+  '3mp': 0,
+  '2x': 0,
+  '1x': 0,
+  '1p': 0,
+  '1m': 0,
+  '1s': 0,
+  '2m': 0,
+  '1ms': 0,
+  '1mp': 0,
+  '1s 1mp': 0,
+  '3s': 0,
+  '3m': 0,
+  '1sp': 0,
+  '1m 2ms': 0,
+  '1s 2x': 0,
+  '2s': 0,
+  '1m 1sp': 0,
+  '2s 2x': 0,
+  '4mp': 0
+}
 const streamDeck = {
   'm': 15,
   's': 15,
@@ -93,7 +127,9 @@ var megaStats = (prices, times) => {
 }
 
 
+console.log(megaStats(prices, 100000))
 
-getAgentPrices().then( data => {
-  console.log(megaStats(data, 100000))
-})
+
+// getAgentPrices().then( data => {
+//   console.log(data)
+// })
